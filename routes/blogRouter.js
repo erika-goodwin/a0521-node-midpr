@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require("joi");
+const Blogs = require('../models/blog.model');
 
 
 //Database for now
@@ -12,8 +13,16 @@ const blogs = [
 
 //========get
 router.get("/", (req, res) => {
-    res.send(blogs);
+    // res.send(blogs);
+    Blogs.fetchAll().then((blogs)=>{
+        console.log(blogs)
+        res.render('page/blog',{
+            pageTitle: 'all blogs'},
+            blogs
+            )
+    }).catch(err => console.log(err))
 });
+
 router.get('/:id', (req, res)=>{
     const blog = blogs.find(b => b.id === parseInt(req.params.id))
     if(!blog) return res.status(404).send('The blog with the given id was not found')
@@ -31,13 +40,22 @@ router.post('/', (req, res)=>{
         return;
       };
 
-    const newBlog = {
-        id: blogs.length + 1,
-        title: req.body.title,
-        content: req.body.content
-    };
-    blogs.push(newBlog);
-    res.send(blogs);
+    // const newBlog = {
+    //     id: blogs.length + 1,
+    //     title: req.body.title,
+    //     content: req.body.content
+    // };
+    // blogs.push(newBlog);
+    // res.send(blogs);
+
+      const{title, content} = req.body
+
+      const blog = new Blogs(title, content)
+      product.save(blogs)
+      product.save(blog)
+      res.redirect('/')
+
+
 })
 //========Put
 router.put('/:id',(req,res)=>{
