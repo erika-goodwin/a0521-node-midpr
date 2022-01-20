@@ -2,11 +2,13 @@ const mongodb = require('mongodb')
 const getDB = require('../util/db-mongo').getDB
 
 module.exports = class Blogs {
-    constructor(_id, title, content,author) {
+    constructor(_id, title, content,author, image, date) {
         this._id = _id
         this.title = title
         this.content = content
         this.author = author
+        this.image = image
+        this.date = date
     }
 
     save(){

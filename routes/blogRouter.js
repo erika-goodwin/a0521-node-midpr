@@ -7,21 +7,29 @@ const Blogs = require('../models/blog.model');
 router.get("/", (req, res) => {
     // res.send(blogs);
     Blogs.fetchAll().then((blogs)=>{
-        console.log(blogs)
+        const shortDesc = blogs.map(p => ({ ...p, content: `${p.content.slice(0, 150)}...` }))
+
         res.render('page/blog-list',{
             pageTitle: 'all blogs',
-            blogs:blogs
+            blogs:shortDesc
         })
     }).catch(err => console.log(err))
 });
 
-// router.get('/:id', (req, res)=>{
-//     const blog = blogs.find(b => b.id === parseInt(req.params.id))
-//     if(!blog) return res.status(404).send('The blog with the given id was not found')
 
-//     res.send(blog)
-// })
+//========Render a blog article
+router.get('/:id', (req, res)=>{
+    const pickedBlogId = req.params.id
+    Blogs.findById(pickedBlogId).then((blogs)=>{
 
+        console.log(' get a blog detail' , blogs)
+
+        res.render('page/blog-page',{
+            pageTitle: 'blog',
+            blogs:blogs
+        })
+    }).catch(err => console.log(err))
+})
 //========Render create
 router.get('/create',(req,res)=>{
     res.render('page/create-edit-blog',{
@@ -35,8 +43,14 @@ router.post('/create', (req, res)=>{
     const { error } = validateInput(req.body)
     if(error) return res.status(400).send(error.details[0].message)
 
-    const{_id, title, content, author} = req.body;
-    const blog = new Blogs(null, title, content, author);
+    let localDate = new Date()
+    const offset = localDate.getTimezoneOffset()
+    localDate = new Date(localDate.getTime() - (offset*60*1000))   
+    const createdDate =  localDate.toISOString().split('T')[0]
+
+
+    const{_id, title, content, author, image, date} = req.body;
+    const blog = new Blogs(null, title, content, author, image, createdDate);
     blog.save();
     res.redirect('/api/blogs');
 })
@@ -76,7 +90,9 @@ function validateInput(input){
     const schema = Joi.object({
       title: Joi.string().min(3).required(),
       content: Joi.string(),
-      author: Joi.string().min(3).required()
+      author: Joi.string().min(3).required(),
+      image: Joi.link().ref(ref),
+      date: Joi.date().iso(),
     });
     return schema.validate(input);
   }
