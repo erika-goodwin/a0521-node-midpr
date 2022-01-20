@@ -2,7 +2,8 @@ const mongodb = require('mongodb')
 const getDB = require('../util/db-mongo').getDB
 
 module.exports = class Blogs {
-    constructor(title, content,author) {
+    constructor(_id, title, content,author) {
+        this._id = _id
         this.title = title
         this.content = content
         this.author = author
@@ -16,7 +17,8 @@ module.exports = class Blogs {
     edit(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
-        return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
+        // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
+        return db.collection('blogs').updateOne({ _id: objectId }, {$set: {title: this.title, content: this.content, author: this.author} })
     }
 
     static deleteById(id){

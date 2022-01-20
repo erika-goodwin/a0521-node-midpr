@@ -51,8 +51,8 @@ router.post('/create', (req, res)=>{
     // };
     // blogs.push(newBlog);
     // res.send(blogs);
-    const{title, content, author} = req.body;
-    const blog = new Blogs(title, content, author);
+    const{_id, title, content, author} = req.body;
+    const blog = new Blogs(null, title, content, author);
     blog.save();
     res.redirect('/api/blogs');
 })
@@ -72,7 +72,7 @@ router.get('/edit/:id',(req,res)=>{
     }).catch(err=>console.log(err))
 })
 //========Post Edit
-router.post('/edit',(req,res)=>{
+router.post('/edit/:id',(req,res)=>{
     console.log(req.body)
     // const blog = blogs.find(b => b.id === parseInt(req.params.id))
     // if(!blog) return res.status(404).send('The blog with the given id was not found')
@@ -84,15 +84,14 @@ router.post('/edit',(req,res)=>{
     // blog.title = req.body.name;
     // blog.content = req.body.content;
     // res.send(blog)
-
-    const{_id, title, content, author} = req.body;
-    const updateBlog = new Blogs(_id, title, content, author);
-    updateBlog.edit(_id).then(()=>res.redirect('/api/blogs')).catch(err=>console.log(err))
+    const pickedBlogId = req.params.id
+    const{title, content, author} = req.body;
+    const updateBlog = new Blogs(pickedBlogId, title, content, author);
+    updateBlog.edit(pickedBlogId).then(()=>res.redirect('/api/blogs')).catch(err=>console.log(err))
     
-
 })
 //========delete
-router.delete('/:id', (req,res)=>{
+router.post('/delete/:id', (req,res)=>{
     // const blog = blogs.find(b => b.id === parseInt(req.params.id));
     // if(!blog) return res.status(404).send('The blog with the given id was not found');
 
