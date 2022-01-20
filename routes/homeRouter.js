@@ -6,7 +6,7 @@ const Blogs = require('../models/blog.model');
 
 router.get("/", (req, res) => {
     // res.send("hello world");
-    res.render('all')
+    res.render('page/home')
     // res.render('page/home')
   });
   

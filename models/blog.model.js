@@ -2,9 +2,10 @@ const mongodb = require('mongodb')
 const getDB = require('../util/db-mongo').getDB
 
 module.exports = class Blogs {
-    constructor(title, content) {
+    constructor(title, content,author) {
         this.title = title
         this.content = content
+        this.author = author
     }
 
     save(){
@@ -15,13 +16,13 @@ module.exports = class Blogs {
     edit(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
-        // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
+        return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
     }
 
     static deleteById(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
-        // return db.collection('blogs').deleteOne({ _id: objectId })
+        return db.collection('blogs').deleteOne({ _id: objectId })
     }
 
     //fetch all blogs
@@ -33,6 +34,6 @@ module.exports = class Blogs {
     static findById(id) {
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
-        // return db.collection('blogs').find({ _id: objectId }).next()
+        return db.collection('blogs').find({ _id: objectId }).next()
     }
 }
