@@ -42,21 +42,24 @@ router.post('/:id/liked',(req,res)=>{
 
     const pickedBlogId = req.params.id
 
-    let currNumber = req.body.liked
-    let likedUpdate
-    if (currNumber){
-         likedUpdate = currNumber++
-    }else{
-        likedUpdate = 0
-    }
-
-    const{_id, title, content, author, image, date, liked} = req.body;
-    const UpdateBlog = new Blogs(null, title, content, author, image, date, likedUpdate);
-    UpdateBlog.edit(pickedBlogId).then(()=>{
+    const UpdateBlog = new Blogs();
+    UpdateBlog.editLiked(pickedBlogId).then(()=>{
         res.redirect(`/api/blogs/${pickedBlogId}`)
     }).catch(err=>console.log(err))
 })
+//========Comment in an article
+router.post('/:id/comment',(req,res)=>{
+    console.log('comment body:', req.body)
 
+    const pickedBlogId = req.params.id
+
+    const comments = req.body;
+    const blog = new Blogs(null, null, null, null, null, null, null, comments);
+    console.log(blog)
+    blog.saveComment(pickedBlogId);
+    res.redirect('/api/blogs/pickedBlogId');
+
+})
 
 //========Post create
 router.post('/create', (req, res)=>{
@@ -70,8 +73,8 @@ router.post('/create', (req, res)=>{
     const createdDate =  localDate.toISOString().split('T')[0]
 
 
-    const{_id, title, content, author, image, date, liked} = req.body;
-    const blog = new Blogs(null, title, content, author, image, createdDate, liked);
+    const{_id, title, content,author, image, date, liked, comments} = req.body;
+    const blog = new Blogs(null, title, content, author, image, createdDate, liked, comments);
     blog.save();
     res.redirect('/api/blogs');
 })
@@ -105,11 +108,11 @@ router.post('/edit/:id',(req,res)=>{
 
     const pickedBlogId = req.params.id
 
-    const{_id, title, content, author, image, date} = req.body;
+    const{_id, title, content,author, image, date, liked, comments} = req.body;
 
     console.log('edit req.body:', req.body)
     
-    const UpdateBlog = new Blogs(pickedBlogId, title, content, author, image, createdDate);
+    const UpdateBlog = new Blogs(pickedBlogId, title, content, author, image, createdDate, comments);
     console.log('updateBlog:', UpdateBlog)
     UpdateBlog.edit(pickedBlogId).then(()=>{
         res.redirect('/api/blogs')
@@ -122,13 +125,18 @@ router.post('/delete/:id', (req,res)=>{
 })
 //========validation
 function validateInput(input){
+    //not null not ' ' 
     const schema = Joi.object({
       title: Joi.string().min(3).required(),
-      content: Joi.string(),
+      content: Joi.string().allow(''),
       author: Joi.string().min(3).required(),
-      image: Joi.string(),
-      date: Joi.date().iso(),
-      liked: Joi.number(),
+      image: Joi.string().allow(''),
+      date: Joi.date().iso().allow(''),
+      liked: Joi.number().allow(''),
+      comments: Joi.object({
+          name:Joi.string(),
+          comment:Joi.string()
+      }),
     });
     return schema.validate(input);
   }
