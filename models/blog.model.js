@@ -2,13 +2,14 @@ const mongodb = require('mongodb')
 const getDB = require('../util/db-mongo').getDB
 
 module.exports = class Blogs {
-    constructor(_id, title, content,author, image, date) {
+    constructor(_id, title, content,author, image, date, liked) {
         this._id = _id
         this.title = title
         this.content = content
         this.author = author
         this.image = image
         this.date = date
+        this.liked = liked
     }
 
     save(){
@@ -20,7 +21,14 @@ module.exports = class Blogs {
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
         // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
-        return db.collection('blogs').updateOne({ _id: objectId }, {$set: {title: this.title, content: this.content, author: this.author} })
+        return db.collection('blogs').updateOne({ _id: objectId }, {$set: {title: this.title, content: this.content, author: this.author, image: this.image, date: this.date} })
+    }
+
+    editLiked(id){
+        const db = getDB()
+        const objectId = new mongodb.ObjectId(id)
+        // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
+        return db.collection('blogs').updateOne({ _id: objectId }, {$set: {liked: this.liked} })
     }
 
     static deleteById(id){

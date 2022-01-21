@@ -5,9 +5,8 @@ require('dotenv').config()
 let db
 
 exports.mongoConnect = (callback) => {
-    // MongoClient.connect(process.env.MONGODB_URL)
-    MongoClient.connect('mongodb+srv://erikahashizume:Shellvoerika6011@cluster0.fqisx.mongodb.net')
-    .then(client => {
+    MongoClient.connect(process.env.MONGODB_URL)
+       .then(client => {
         console.log(' Connected to Database')
         db = client.db('node-blog')
         callback()
