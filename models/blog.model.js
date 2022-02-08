@@ -21,28 +21,30 @@ module.exports = class Blogs {
     saveComment(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
-        return db.collection('blogs').updateOne({ _id: objectId },{
-            $set:{
-                comments : {
-                    name:this.comments.name,
-                    comment: this.comments.comment
-                }
-            }
-        })
+        return db.collection('blogs').updateOne(
+            {_id: objectId },
+            {$addToSet : {comments: this.comments}}
+        )
     }
 
     edit(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
         // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
-        return db.collection('blogs').updateOne({ _id: objectId }, {$set: {title: this.title, content: this.content, author: this.author, image: this.image, date: this.date} })
+        return db.collection('blogs').updateOne(
+            { _id: objectId }, 
+            {$set: {title: this.title, content: this.content, author: this.author, image: this.image, date: this.date} 
+        })
     }
 
     editLiked(id){
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
         // return db.collection('blogs').updateOne({ _id: objectId }, {$set: this })
-        return db.collection('blogs').updateOne({ _id: objectId }, {$inc: {liked: 1} })
+        return db.collection('blogs').updateOne(
+            { _id: objectId }, 
+            {$inc: {liked: 1} 
+        })
     }
 
 
@@ -50,6 +52,14 @@ module.exports = class Blogs {
         const db = getDB()
         const objectId = new mongodb.ObjectId(id)
         return db.collection('blogs').deleteOne({ _id: objectId })
+    }
+    deleteCommentById(id){
+        const db = getDB()
+        const objectId = new mongodb.ObjectId(id)
+        return db.collection('blogs').updateOne(
+            { _id: objectId },
+            { $pull: {comments : {uniqueId : id }
+        }})
     }
 
     //fetch all blogs

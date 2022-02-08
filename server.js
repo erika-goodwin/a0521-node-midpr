@@ -26,7 +26,7 @@ app.use((req,res,next) => {
     res.status(404).render('404', { pageTitle: 'Page Not Found'})
 })
 
-//PORT
+
 const PORT = process.env.PORT || 8000;
 // app.listen(PORT, ()=>console.log(`Listening port ${PORT}`))
 mongoConnect(()=>{
