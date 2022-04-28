@@ -6,7 +6,7 @@
 
 This is the node application with express for blog. The client side is made with React.js and Redux. The database is Mongodb with Mongoose. 
 
-  - **Speck:** Node.js, Exprss, Tailwindcss, MongoDB, ejs, Heroku
+  - **Spec:** Node.js, Exprss, Tailwindcss, MongoDB, ejs, Heroku
   
   - **Check App:** [Check here](https://node-mongo-blog-app.herokuapp.com/api/blogs)
   
